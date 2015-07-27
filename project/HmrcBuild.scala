@@ -16,27 +16,24 @@
 
 import sbt.Keys._
 import sbt._
-import uk.gov.hmrc.PublishingSettings._
-import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning
 
 object HmrcBuild extends Build {
 
   import uk.gov.hmrc.DefaultBuildSettings._
-  import uk.gov.hmrc.{SbtBuildInfo, ShellPrompt, _}
+  import uk.gov.hmrc._
 
   val appName = "play-config"
-
 
   lazy val microservice = Project(appName, file("."))
     .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
     .settings(
       targetJvm := "jvm-1.7",
       libraryDependencies ++= AppDependencies(),
-      crossScalaVersions := Seq("2.11.6"),
+      crossScalaVersions := Seq("2.11.7"),
       resolvers := Seq(
         Resolver.bintrayRepo("hmrc", "releases"),
-        "typesafe-releases" at "http://repo.typesafe.com/typesafe/releases/"
+        Resolver.typesafeRepo("releases")
       )
     )
     .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
@@ -47,7 +44,7 @@ private object AppDependencies {
   import play.core.PlayVersion
 
   val compile = Seq(
-    "com.typesafe.play" %% "play" % PlayVersion.current,
+    "com.typesafe.play" %% "play" % PlayVersion.current % "provided",
     "net.ceedubs" %% "ficus" % "1.1.1"
   )
 
@@ -60,7 +57,7 @@ private object AppDependencies {
     def apply() = new TestDependencies {
       override lazy val test = Seq(
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-        "org.scalatest" %% "scalatest" % "2.2.1" % scope,
+        "org.scalatest" %% "scalatest" % "2.2.2" % scope,
         "org.pegdown" % "pegdown" % "1.4.2" % scope
       )
     }.test
