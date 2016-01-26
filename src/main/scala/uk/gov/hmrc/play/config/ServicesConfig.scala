@@ -18,52 +18,66 @@ package uk.gov.hmrc.play.config
 
 import play.api.Configuration
 
-trait ServicesConfig extends RunMode {
-  import play.api.Play
-  import play.api.Play.current
+trait CleanServicesConfig {
 
-  protected lazy val rootServices = "microservice.services"
+  def config: Configuration
+  def env: String
+
+  protected val rootServices = "microservice.services"
   protected lazy val services = s"$env.microservice.services"
 
 //  @deprecated("The 'govuk-tax' is an unnecessary level of configuration please use ServicesConfig.services", "24.11.14")
   protected lazy val playServices = s"govuk-tax.$env.services"
 
   protected lazy val defaultProtocol =
-    Play.configuration.getString(s"$rootServices.protocol")
-    .getOrElse(Play.configuration.getString(s"$services.protocol")
-      .getOrElse("http"))
+    config.getString(s"$rootServices.protocol")
+      .orElse(config.getString(s"$services.protocol"))
+      .getOrElse("http")
 
-  protected def config(serviceName: String): Configuration =
-    Play.configuration.getConfig(s"$rootServices.$serviceName")
-      .getOrElse(Play.configuration.getConfig(s"$services.$serviceName")
-      .getOrElse(Play.configuration.getConfig(s"$playServices.$serviceName")
-      .getOrElse(throw new IllegalArgumentException(s"Configuration for service $serviceName not found"))))
+  protected def serviceConfig(serviceName: String): Configuration =
+    config.getConfig(s"$rootServices.$serviceName")
+      .orElse(config.getConfig(s"$services.$serviceName"))
+      .orElse(config.getConfig(s"$playServices.$serviceName"))
+      .getOrElse(throw new IllegalArgumentException(s"Configuration for service $serviceName not found"))
 
-  def baseUrl(serviceName: String) = {
+  def url(serviceName: String) = maybeConfString(s"$serviceName.url").getOrElse(urlByParts(serviceName))
+
+  private def urlByParts(serviceName: String) =
+    List(
+      Some(baseUrlByParts(serviceName)),
+      maybeConfString(s"$serviceName.path"),
+      maybeConfString(s"$serviceName.version")
+    )
+      .flatten
+      .mkString("/")
+
+  private def baseUrlByParts(serviceName: String) = {
     val protocol = getConfString(s"$serviceName.protocol",defaultProtocol)
     val host = getConfString(s"$serviceName.host", throw new RuntimeException(s"Could not find config $serviceName.host"))
     val port = getConfInt(s"$serviceName.port", throw new RuntimeException(s"Could not find config $serviceName.port"))
     s"$protocol://$host:$port"
   }
 
-  def getConfString(confKey: String, defString: => String): String = {
-    Play.configuration.getString(s"$rootServices.$confKey").
-      getOrElse(Play.configuration.getString(s"$services.$confKey").
-      getOrElse(Play.configuration.getString(s"$playServices.$confKey").
-      getOrElse(defString)))
-  }
+  def getConfString(confKey: String, default: => String): String = maybeConfString(confKey).getOrElse(default)
+  def maybeConfString: String => Option[String] = conf(config.getString(_, None))
 
-  def getConfInt(confKey: String, defInt: => Int): Int = {
-    Play.configuration.getInt(s"$rootServices.$confKey").
-      getOrElse(Play.configuration.getInt(s"$services.$confKey").
-      getOrElse(Play.configuration.getInt(s"$playServices.$confKey").
-      getOrElse(defInt)))
-  }
+  def getConfInt(confKey: String, default: => Int): Int = maybeConfInt(confKey).getOrElse(default)
+  def maybeConfInt: String => Option[Int] = conf(config.getInt)
 
-  def getConfBool(confKey: String, defBool: => Boolean): Boolean = {
-    Play.configuration.getBoolean(s"$rootServices.$confKey").
-      getOrElse(Play.configuration.getBoolean(s"$services.$confKey").
-      getOrElse(Play.configuration.getBoolean(s"$playServices.$confKey").
-      getOrElse(defBool)))
+  def getConfBool(confKey: String, default: => Boolean): Boolean = maybeConfBool(confKey).getOrElse(default)
+  def maybeConfBool: String => Option[Boolean] = conf(config.getBoolean)
+
+  private def conf[T](supply: String => Option[T])(confKey: String): Option[T] = {
+    supply(s"$rootServices.$confKey").
+      orElse(supply(s"$services.$confKey")).
+      orElse(supply(s"$playServices.$confKey"))
   }
+}
+
+trait ServicesConfig extends CleanServicesConfig with RunMode {
+  import play.api.Play
+  import play.api.Play.current
+
+  // RunMode provides the implementation of env: String
+  override def config = Play.configuration
 }
