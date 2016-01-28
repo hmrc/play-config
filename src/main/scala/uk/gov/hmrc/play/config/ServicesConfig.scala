@@ -44,14 +44,14 @@ trait CleanServicesConfig {
 
   private def urlByParts(serviceName: String) =
     List(
-      Some(baseUrlByParts(serviceName)),
+      Some(baseUrl(serviceName)),
       maybeConfString(s"$serviceName.path"),
       maybeConfString(s"$serviceName.version")
     )
       .flatten
       .mkString("/")
 
-  private def baseUrlByParts(serviceName: String) = {
+  def baseUrl(serviceName: String) = {
     val protocol = getConfString(s"$serviceName.protocol",defaultProtocol)
     val host = getConfString(s"$serviceName.host", throw new RuntimeException(s"Could not find config $serviceName.host"))
     val port = getConfInt(s"$serviceName.port", throw new RuntimeException(s"Could not find config $serviceName.port"))

@@ -88,5 +88,9 @@ class ServicesConfigTest extends WordSpecLike with Matchers {
     "read an integer" in {
       sc.getConfInt("sized.count", 0) shouldBe 42
     }
+
+    "support baseUrl " in {
+      sc.baseUrl("specific") shouldBe "http://localhost:8090"
+    }
   }
 }
