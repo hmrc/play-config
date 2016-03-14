@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 HM Revenue & Customs
+ * Copyright 2016 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,13 @@ trait ServicesConfig extends RunMode {
       .getOrElse(Play.configuration.getConfig(s"$playServices.$serviceName")
       .getOrElse(throw new IllegalArgumentException(s"Configuration for service $serviceName not found"))))
 
+  def baseUrlOpt(serviceName: String) = {
+    val protocol = getConfString(s"$serviceName.protocol",defaultProtocol)
+    for { host <- getConfStringOpt(s"$serviceName.host")
+          port <- getConfIntOpt(s"$serviceName.port")}
+      yield s"$protocol://$host:$port"
+  }
+
   def baseUrl(serviceName: String) = {
     val protocol = getConfString(s"$serviceName.protocol",defaultProtocol)
     val host = getConfString(s"$serviceName.host", throw new RuntimeException(s"Could not find config $serviceName.host"))
@@ -47,23 +54,32 @@ trait ServicesConfig extends RunMode {
   }
 
   def getConfString(confKey: String, defString: => String): String = {
+    getConfStringOpt(confKey).getOrElse(defString)
+  }
+
+  def getConfStringOpt(confKey: String): Option[String] = {
     Play.configuration.getString(s"$rootServices.$confKey").
-      getOrElse(Play.configuration.getString(s"$services.$confKey").
-      getOrElse(Play.configuration.getString(s"$playServices.$confKey").
-      getOrElse(defString)))
+      orElse(Play.configuration.getString(s"$services.$confKey")).
+      orElse(Play.configuration.getString(s"$playServices.$confKey"))
   }
 
   def getConfInt(confKey: String, defInt: => Int): Int = {
+    getConfIntOpt(confKey).getOrElse(defInt)
+  }
+
+  def getConfIntOpt(confKey: String): Option[Int] = {
     Play.configuration.getInt(s"$rootServices.$confKey").
-      getOrElse(Play.configuration.getInt(s"$services.$confKey").
-      getOrElse(Play.configuration.getInt(s"$playServices.$confKey").
-      getOrElse(defInt)))
+      orElse(Play.configuration.getInt(s"$services.$confKey")).
+      orElse(Play.configuration.getInt(s"$playServices.$confKey"))
   }
 
   def getConfBool(confKey: String, defBool: => Boolean): Boolean = {
+    getConfBoolOpt(confKey).getOrElse(defBool)
+  }
+
+  def getConfBoolOpt(confKey: String): Option[Boolean] = {
     Play.configuration.getBoolean(s"$rootServices.$confKey").
-      getOrElse(Play.configuration.getBoolean(s"$services.$confKey").
-      getOrElse(Play.configuration.getBoolean(s"$playServices.$confKey").
-      getOrElse(defBool)))
+      orElse(Play.configuration.getBoolean(s"$services.$confKey")).
+      orElse(Play.configuration.getBoolean(s"$playServices.$confKey"))
   }
 }
