@@ -20,7 +20,6 @@ import uk.gov.hmrc.versioning.SbtGitVersioning
 
 object HmrcBuild extends Build {
 
-  import uk.gov.hmrc.DefaultBuildSettings._
   import uk.gov.hmrc._
 
   val appName = "play-config"
