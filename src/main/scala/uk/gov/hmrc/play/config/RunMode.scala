@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 HM Revenue & Customs
+ * Copyright 2016 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,45 @@ package uk.gov.hmrc.play.config
 
 import play.api.{Mode, Play}
 
+import scala.annotation.tailrec
+
 trait RunMode {
 
   import play.api.Play.current
 
-  lazy val env = {
-    val runMode = if (Play.mode.equals(Mode.Test)) "Test"
-    else
-      Play.configuration.getString("run.mode").getOrElse("Dev")
+  lazy val env = if (Play.mode.equals(Mode.Test)) "Test" else Play.configuration.getString("run.mode").getOrElse("Dev")
 
-    runMode
+
+  /**
+    * Returns the appropriate `env` specific url given `prod` and other alternatives.
+    *
+    * For example, to decide which Url to return based on environment:
+    * {{{
+    * val url = envPath("/ping")(other = "http://localhost:9000/some-service/", prod = "")
+    * }}}
+    *
+    * Such that, in `dev` mode, the result would be the absolute Url string `http://localhost:9000/some-service/status`
+    * and in `prod` the result would be a relative Url String `/ping`
+    *
+    * @param path the path to append to the `prod` or `other`
+    * @param other the alternative path
+    * @param prod the production path
+    * @return the `env` specific path
+    */
+  def envPath(path: String = "")(other: => String = "", prod: => String = "") = {
+
+    @tailrec
+    def sanitise(url: String, prefix: String = ""): String = {
+      if(url.startsWith("/")) sanitise(url.drop(1), prefix)
+      else if(url.endsWith("/")) sanitise(url.dropRight(1), prefix)
+      else if (url.isEmpty || prefix.isEmpty) url
+      else prefix + url
+    }
+
+    val url = if (env == "Prod") sanitise(prod, "/") else sanitise(other)
+    url + sanitise(path, "/")
   }
+
 }
 
 object RunMode extends RunMode
