@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 HM Revenue & Customs
+ * Copyright 2016 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,4 +66,10 @@ trait ServicesConfig extends RunMode {
       getOrElse(Play.configuration.getBoolean(s"$playServices.$confKey").
       getOrElse(defBool)))
   }
+
+  def getInt(key: String) = Play.configuration.getInt(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
+
+  def getString(key: String) = Play.configuration.getString(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
+
+  def getBoolean(key: String) = Play.configuration.getBoolean(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
 }
