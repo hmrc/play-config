@@ -29,7 +29,7 @@ class RunModeSpec extends WordSpecLike with Matchers with BeforeAndAfterAll {
   }
 
   override def afterAll() {
-    Play.stop()
+    Play.stop(fakeApplication)
   }
 
   trait Setup extends RunMode
