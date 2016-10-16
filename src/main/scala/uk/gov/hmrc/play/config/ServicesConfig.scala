@@ -67,6 +67,13 @@ trait ServicesConfig extends RunMode {
       getOrElse(defBool)))
   }
 
+  def getConfLong(confKey: String, defLong: => Long): Long = {
+    Play.configuration.getLong(s"$rootServices.$confKey").
+      getOrElse(Play.configuration.getLong(s"$services.$confKey").
+        getOrElse(Play.configuration.getLong(s"$playServices.$confKey").
+          getOrElse(defLong)))
+  }
+
   def getInt(key: String) = Play.configuration.getInt(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
 
   def getString(key: String) = Play.configuration.getString(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
