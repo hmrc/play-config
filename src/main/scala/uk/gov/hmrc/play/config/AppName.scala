@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 
 package uk.gov.hmrc.play.config
 
-import play.api.Play
+import play.api.{ Configuration, Play }
 
 trait AppName {
-  lazy val appName = Play.current.configuration.getString("appName").getOrElse("APP NAME NOT SET")
+  protected lazy val appNameConfiguration: Configuration = Play.current.configuration
+  lazy val appName = appNameConfiguration.getString("appName").getOrElse("APP NAME NOT SET")
 }
 
 object AppName extends AppName

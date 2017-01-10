@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ package uk.gov.hmrc.play.config
 import play.api.Configuration
 
 trait ServicesConfig extends RunMode {
-  import play.api.Play
-  import play.api.Play.current
 
   protected lazy val rootServices = "microservice.services"
   protected lazy val services = s"$env.microservice.services"
@@ -29,14 +27,14 @@ trait ServicesConfig extends RunMode {
   protected lazy val playServices = s"govuk-tax.$env.services"
 
   protected lazy val defaultProtocol =
-    Play.configuration.getString(s"$rootServices.protocol")
-    .getOrElse(Play.configuration.getString(s"$services.protocol")
+    runModeConfiguration.getString(s"$rootServices.protocol")
+    .getOrElse(runModeConfiguration.getString(s"$services.protocol")
       .getOrElse("http"))
 
   protected def config(serviceName: String): Configuration =
-    Play.configuration.getConfig(s"$rootServices.$serviceName")
-      .getOrElse(Play.configuration.getConfig(s"$services.$serviceName")
-      .getOrElse(Play.configuration.getConfig(s"$playServices.$serviceName")
+    runModeConfiguration.getConfig(s"$rootServices.$serviceName")
+      .getOrElse(runModeConfiguration.getConfig(s"$services.$serviceName")
+      .getOrElse(runModeConfiguration.getConfig(s"$playServices.$serviceName")
       .getOrElse(throw new IllegalArgumentException(s"Configuration for service $serviceName not found"))))
 
   def baseUrl(serviceName: String) = {
@@ -47,29 +45,29 @@ trait ServicesConfig extends RunMode {
   }
 
   def getConfString(confKey: String, defString: => String): String = {
-    Play.configuration.getString(s"$rootServices.$confKey").
-      getOrElse(Play.configuration.getString(s"$services.$confKey").
-      getOrElse(Play.configuration.getString(s"$playServices.$confKey").
+    runModeConfiguration.getString(s"$rootServices.$confKey").
+      getOrElse(runModeConfiguration.getString(s"$services.$confKey").
+      getOrElse(runModeConfiguration.getString(s"$playServices.$confKey").
       getOrElse(defString)))
   }
 
   def getConfInt(confKey: String, defInt: => Int): Int = {
-    Play.configuration.getInt(s"$rootServices.$confKey").
-      getOrElse(Play.configuration.getInt(s"$services.$confKey").
-      getOrElse(Play.configuration.getInt(s"$playServices.$confKey").
+    runModeConfiguration.getInt(s"$rootServices.$confKey").
+      getOrElse(runModeConfiguration.getInt(s"$services.$confKey").
+      getOrElse(runModeConfiguration.getInt(s"$playServices.$confKey").
       getOrElse(defInt)))
   }
 
   def getConfBool(confKey: String, defBool: => Boolean): Boolean = {
-    Play.configuration.getBoolean(s"$rootServices.$confKey").
-      getOrElse(Play.configuration.getBoolean(s"$services.$confKey").
-      getOrElse(Play.configuration.getBoolean(s"$playServices.$confKey").
+    runModeConfiguration.getBoolean(s"$rootServices.$confKey").
+      getOrElse(runModeConfiguration.getBoolean(s"$services.$confKey").
+      getOrElse(runModeConfiguration.getBoolean(s"$playServices.$confKey").
       getOrElse(defBool)))
   }
 
-  def getInt(key: String) = Play.configuration.getInt(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
+  def getInt(key: String) = runModeConfiguration.getInt(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
 
-  def getString(key: String) = Play.configuration.getString(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
+  def getString(key: String) = runModeConfiguration.getString(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
 
-  def getBoolean(key: String) = Play.configuration.getBoolean(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
+  def getBoolean(key: String) = runModeConfiguration.getBoolean(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
 }

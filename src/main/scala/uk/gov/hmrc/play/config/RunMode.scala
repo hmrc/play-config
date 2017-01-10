@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 
 package uk.gov.hmrc.play.config
 
-import play.api.{Mode, Play}
+import play.api.{Configuration, Mode, Play}
 
 import scala.annotation.tailrec
 
 trait RunMode {
 
-  import play.api.Play.current
+  protected lazy val mode: Mode.Mode = Play.current.mode
+  protected lazy val runModeConfiguration: Configuration = Play.current.configuration
 
-  lazy val env = if (Play.mode.equals(Mode.Test)) "Test" else Play.configuration.getString("run.mode").getOrElse("Dev")
+  lazy val env = if (mode.equals(Mode.Test)) "Test" else runModeConfiguration.getString("run.mode").getOrElse("Dev")
 
 
   /**
