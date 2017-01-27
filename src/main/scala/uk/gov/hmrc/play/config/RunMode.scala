@@ -16,14 +16,17 @@
 
 package uk.gov.hmrc.play.config
 
-import play.api.{Configuration, Mode, Play}
+import com.google.inject.Inject
+import play.api.{Application, Configuration, Mode}
 
 import scala.annotation.tailrec
 
 trait RunMode {
 
-  protected lazy val mode: Mode.Mode = Play.current.mode
-  protected lazy val runModeConfiguration: Configuration = Play.current.configuration
+  protected val app: Application
+
+  protected lazy val mode: Mode.Mode = app.mode
+  protected lazy val runModeConfiguration: Configuration = app.configuration
 
   lazy val env = if (mode.equals(Mode.Test)) "Test" else runModeConfiguration.getString("run.mode").getOrElse("Dev")
 
@@ -60,4 +63,4 @@ trait RunMode {
 
 }
 
-object RunMode extends RunMode
+class DefaultRunMode @Inject()(val app: Application) extends RunMode

@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.play.config
 
-import play.api.Configuration
+import com.google.inject.Inject
+import play.api.{Application, Configuration}
 
 trait ServicesConfig extends RunMode {
 
@@ -71,3 +72,5 @@ trait ServicesConfig extends RunMode {
 
   def getBoolean(key: String) = runModeConfiguration.getBoolean(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
 }
+
+class DefaultServicesConfig @Inject()(val app: Application) extends ServicesConfig
