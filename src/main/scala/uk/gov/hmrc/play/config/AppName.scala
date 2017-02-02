@@ -19,8 +19,8 @@ package uk.gov.hmrc.play.config
 import play.api.{ Configuration, Play }
 
 trait AppName {
-  protected lazy val appNameConfiguration: Configuration = Play.current.configuration
-  lazy val appName = appNameConfiguration.getString("appName").getOrElse("APP NAME NOT SET")
+  protected def appNameConfiguration: Configuration = Play.current.configuration
+  def appName = appNameConfiguration.getString("appName").getOrElse("APP NAME NOT SET")
 }
 
 object AppName extends AppName
