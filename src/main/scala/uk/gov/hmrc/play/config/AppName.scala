@@ -16,11 +16,20 @@
 
 package uk.gov.hmrc.play.config
 
-import play.api.{ Configuration, Play }
+import com.google.inject.Inject
+import play.api.{Application, Configuration, Play}
 
 trait AppName {
-  protected def appNameConfiguration: Configuration = Play.current.configuration
+
+  protected def app: Application
+
+  protected def appNameConfiguration: Configuration = app.configuration
   def appName = appNameConfiguration.getString("appName").getOrElse("APP NAME NOT SET")
 }
 
-object AppName extends AppName
+
+object AppName extends AppName {
+  override def app = Play.current
+}
+
+class DefaultAppName @Inject()(val app: Application) extends AppName

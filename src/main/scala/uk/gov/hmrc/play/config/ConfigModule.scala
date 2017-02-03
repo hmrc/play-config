@@ -24,6 +24,7 @@ import com.google.inject.AbstractModule
 class ConfigModule extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[RunMode]) to classOf[DefaultRunMode]
+    bind(classOf[AppName]) to classOf[DefaultAppName]
     bind(classOf[ServicesConfig]) to classOf[DefaultServicesConfig]
   }
 }
