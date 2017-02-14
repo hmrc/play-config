@@ -16,20 +16,15 @@
 
 package uk.gov.hmrc.play.config
 
-import com.google.inject.Inject
-import play.api.{Application, Configuration, Play}
+import com.google.inject.AbstractModule
 
-trait AppName {
-
-  protected def app: Application
-
-  protected def appNameConfiguration: Configuration = app.configuration
-  def appName = appNameConfiguration.getString("appName").getOrElse("APP NAME NOT SET")
+/**
+  * Created by william on 27/01/17.
+  */
+class ConfigModule extends AbstractModule {
+  override def configure(): Unit = {
+    bind(classOf[RunMode]) to classOf[DefaultRunMode]
+    bind(classOf[AppName]) to classOf[DefaultAppName]
+    bind(classOf[ServicesConfig]) to classOf[DefaultServicesConfig]
+  }
 }
-
-
-object AppName extends AppName {
-  override def app = Play.current
-}
-
-class DefaultAppName @Inject()(val app: Application) extends AppName

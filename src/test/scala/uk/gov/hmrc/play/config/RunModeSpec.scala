@@ -17,7 +17,7 @@
 package uk.gov.hmrc.play.config
 
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
-import play.api.Play
+import play.api.{Application, Play}
 import play.api.test.FakeApplication
 
 class RunModeSpec extends WordSpecLike with Matchers with BeforeAndAfterAll {
@@ -37,6 +37,7 @@ class RunModeSpec extends WordSpecLike with Matchers with BeforeAndAfterAll {
   "envPath" should {
 
     "return the `other` env path" in new Setup {
+      override protected val app: Application = fakeApplication
       override lazy val env = "Dev"
 
       envPath("/somePath")(other = "http://localhost") shouldBe "http://localhost/somePath"
@@ -49,6 +50,7 @@ class RunModeSpec extends WordSpecLike with Matchers with BeforeAndAfterAll {
     }
 
     "return the `prod` env path" in new Setup {
+      override protected val app: Application = fakeApplication
       override lazy val env = "Prod"
 
       envPath("/somePath")(prod = "prod") shouldBe "/prod/somePath"
