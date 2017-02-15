@@ -19,6 +19,8 @@ package uk.gov.hmrc.play.config
 import com.google.inject.Inject
 import play.api.{Application, Configuration}
 
+import scala.concurrent.duration.Duration
+
 trait ServicesConfig extends RunMode {
 
   protected lazy val rootServices = "microservice.services"
@@ -27,7 +29,7 @@ trait ServicesConfig extends RunMode {
 //  @deprecated("The 'govuk-tax' is an unnecessary level of configuration please use ServicesConfig.services", "24.11.14")
   protected lazy val playServices = s"govuk-tax.$env.services"
 
-  protected lazy val defaultProtocol =
+  protected lazy val defaultProtocol: String =
     runModeConfiguration.getString(s"$rootServices.protocol")
     .getOrElse(runModeConfiguration.getString(s"$services.protocol")
       .getOrElse("http"))
@@ -38,7 +40,7 @@ trait ServicesConfig extends RunMode {
       .getOrElse(runModeConfiguration.getConfig(s"$playServices.$serviceName")
       .getOrElse(throw new IllegalArgumentException(s"Configuration for service $serviceName not found"))))
 
-  def baseUrl(serviceName: String) = {
+  def baseUrl(serviceName: String): String = {
     val protocol = getConfString(s"$serviceName.protocol",defaultProtocol)
     val host = getConfString(s"$serviceName.host", throw new RuntimeException(s"Could not find config $serviceName.host"))
     val port = getConfInt(s"$serviceName.port", throw new RuntimeException(s"Could not find config $serviceName.port"))
@@ -66,11 +68,24 @@ trait ServicesConfig extends RunMode {
       getOrElse(defBool)))
   }
 
-  def getInt(key: String) = runModeConfiguration.getInt(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
+  def getConfDuration(confKey: String, defDur: => Duration): Duration =
+    runModeConfiguration.getString(s"$rootServices.$confKey")
+      .orElse(runModeConfiguration.getString(s"$services.$confKey"))
+      .orElse(runModeConfiguration.getString(s"$playServices.$confKey")) match {
+        case Some(s) => Duration.create(s)
+        case None => defDur
+      }
 
-  def getString(key: String) = runModeConfiguration.getString(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
+  def getInt(key: String): Int = runModeConfiguration.getInt(key).getOrElse(configNotFoundError(key))
 
-  def getBoolean(key: String) = runModeConfiguration.getBoolean(key).getOrElse(throw new RuntimeException(s"Could not find config key '$key'"))
+  def getString(key: String): String = runModeConfiguration.getString(key).getOrElse(configNotFoundError(key))
+
+  def getBoolean(key: String): Boolean = runModeConfiguration.getBoolean(key).getOrElse(configNotFoundError(key))
+
+  def getDuration(key: String): Duration = runModeConfiguration.getString(key).map(Duration.create).getOrElse(configNotFoundError(key))
+
+  private def configNotFoundError(key: String) = throw new RuntimeException(s"Could not find config key '$key'")
+
 }
 
 class DefaultServicesConfig @Inject()(val app: Application) extends ServicesConfig
