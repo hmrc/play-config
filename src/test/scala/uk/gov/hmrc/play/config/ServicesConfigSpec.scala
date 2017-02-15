@@ -95,15 +95,15 @@ class ServicesConfigSpec extends WordSpecLike with Matchers with BeforeAndAfterA
   }
 
   "getConfDuration" should {
-    "return a boolean from config under rootServices" in new Setup {
+    "return a Duration from config under rootServices" in new Setup {
       getConfDuration("testDur", 60.minutes) shouldBe 60.seconds
     }
 
-    "return a boolean from config under Dev services" in new Setup {
+    "return a Duration from config under Dev services" in new Setup {
       getConfDuration("devTestDur", 60.minutes) shouldBe 60.seconds
     }
 
-    "return a default boolean if the config can't be found" in new Setup {
+    "return a default Duration if the config can't be found" in new Setup {
       getConfDuration("notInConf", 60.seconds) shouldBe 60.seconds
     }
   }
@@ -142,7 +142,7 @@ class ServicesConfigSpec extends WordSpecLike with Matchers with BeforeAndAfterA
   }
 
   "getDuration" should {
-    "return a boolean from config" in new Setup {
+    "return a Duration from config" in new Setup {
       getDuration("anotherDur") shouldBe 60.seconds
     }
 
