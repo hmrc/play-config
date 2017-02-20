@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.play.config
+package uk.gov.hmrc.play.config.inject
 
 import com.google.inject.AbstractModule
 

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.play.config
+package uk.gov.hmrc.play.config.inject
 
-import play.api.Configuration
+import com.google.inject.Inject
+import play.api.{Configuration, Environment}
 
 import scala.concurrent.duration.Duration
 
@@ -86,3 +87,8 @@ trait ServicesConfig extends RunMode {
   private def configNotFoundError(key: String) = throw new RuntimeException(s"Could not find config key '$key'")
 
 }
+
+class DefaultServicesConfig @Inject()(
+  val runModeConfiguration: Configuration,
+  val environment: Environment
+) extends ServicesConfig

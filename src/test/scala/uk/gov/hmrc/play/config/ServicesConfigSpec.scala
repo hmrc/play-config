@@ -17,6 +17,7 @@
 package uk.gov.hmrc.play.config
 
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+import play.api.Play
 import play.api.test.FakeApplication
 
 import scala.concurrent.duration._
@@ -43,14 +44,15 @@ class ServicesConfigSpec extends WordSpecLike with Matchers with BeforeAndAfterA
 
   lazy val fakeApplication = FakeApplication(additionalConfiguration = config)
 
+  override def beforeAll(): Unit = {
+    Play.start(fakeApplication)
+  }
 
   override def afterAll() {
-    fakeApplication.stop()
+    Play.stop(fakeApplication)
   }
 
-  trait Setup extends ServicesConfig {
-    override protected def app = fakeApplication
-  }
+  trait Setup extends ServicesConfig
 
   "getConfString" should {
     "return a string from config under rootServices" in new Setup {

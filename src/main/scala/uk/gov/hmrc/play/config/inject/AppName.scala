@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.play.config
+package uk.gov.hmrc.play.config.inject
 
-import play.api.{Configuration, Play}
+import com.google.inject.Inject
+import play.api.{Application, Configuration, Play}
 
 trait AppName {
-  protected def appNameConfiguration: Configuration = Play.current.configuration
+  protected def appNameConfiguration: Configuration
   def appName = appNameConfiguration.getString("appName").getOrElse("APP NAME NOT SET")
 }
 
 
-object AppName extends AppName
+class DefaultAppName @Inject()(val appNameConfiguration: Configuration) extends AppName

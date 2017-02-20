@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.play.config
+package uk.gov.hmrc.play.config.inject
 
-import play.api._
+import com.google.inject.Inject
+import play.api.{Application, Configuration, Environment, Mode}
 
 import scala.annotation.tailrec
 
 trait RunMode {
 
-  protected def mode: Mode.Mode = Play.current.mode
-  protected def runModeConfiguration: Configuration = Play.current.configuration
+  protected def environment: Environment
+
+  protected def mode: Mode.Mode = environment.mode
+  protected def runModeConfiguration: Configuration
 
   lazy val env = if (mode.equals(Mode.Test)) "Test" else runModeConfiguration.getString("run.mode").getOrElse("Dev")
 
@@ -59,3 +62,8 @@ trait RunMode {
   }
 
 }
+
+class DefaultRunMode @Inject()(
+  val runModeConfiguration: Configuration,
+  val environment: Environment
+) extends RunMode
