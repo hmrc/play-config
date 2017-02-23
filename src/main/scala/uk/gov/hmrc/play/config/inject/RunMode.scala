@@ -25,7 +25,7 @@ trait RunMode extends uk.gov.hmrc.play.config.RunMode {
 
   protected def environment: Environment
 
-  protected override def mode: Mode.Mode = environment.mode
+  protected override def mode = environment.mode
 
 }
 

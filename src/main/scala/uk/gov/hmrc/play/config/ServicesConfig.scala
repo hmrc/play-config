@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.play.config
 
-import play.api.Configuration
-
 import scala.concurrent.duration.Duration
 
 trait ServicesConfig extends RunMode {
@@ -33,41 +31,41 @@ trait ServicesConfig extends RunMode {
     .getOrElse(runModeConfiguration.getString(s"$services.protocol")
       .getOrElse("http"))
 
-  protected def config(serviceName: String): Configuration =
+  protected def config(serviceName: String) =
     runModeConfiguration.getConfig(s"$rootServices.$serviceName")
       .getOrElse(runModeConfiguration.getConfig(s"$services.$serviceName")
       .getOrElse(runModeConfiguration.getConfig(s"$playServices.$serviceName")
       .getOrElse(throw new IllegalArgumentException(s"Configuration for service $serviceName not found"))))
 
-  def baseUrl(serviceName: String): String = {
+  def baseUrl(serviceName: String) = {
     val protocol = getConfString(s"$serviceName.protocol",defaultProtocol)
     val host = getConfString(s"$serviceName.host", throw new RuntimeException(s"Could not find config $serviceName.host"))
     val port = getConfInt(s"$serviceName.port", throw new RuntimeException(s"Could not find config $serviceName.port"))
     s"$protocol://$host:$port"
   }
 
-  def getConfString(confKey: String, defString: => String): String = {
+  def getConfString(confKey: String, defString: => String) = {
     runModeConfiguration.getString(s"$rootServices.$confKey").
       getOrElse(runModeConfiguration.getString(s"$services.$confKey").
       getOrElse(runModeConfiguration.getString(s"$playServices.$confKey").
       getOrElse(defString)))
   }
 
-  def getConfInt(confKey: String, defInt: => Int): Int = {
+  def getConfInt(confKey: String, defInt: => Int) = {
     runModeConfiguration.getInt(s"$rootServices.$confKey").
       getOrElse(runModeConfiguration.getInt(s"$services.$confKey").
       getOrElse(runModeConfiguration.getInt(s"$playServices.$confKey").
       getOrElse(defInt)))
   }
 
-  def getConfBool(confKey: String, defBool: => Boolean): Boolean = {
+  def getConfBool(confKey: String, defBool: => Boolean) = {
     runModeConfiguration.getBoolean(s"$rootServices.$confKey").
       getOrElse(runModeConfiguration.getBoolean(s"$services.$confKey").
       getOrElse(runModeConfiguration.getBoolean(s"$playServices.$confKey").
       getOrElse(defBool)))
   }
 
-  def getConfDuration(confKey: String, defDur: => Duration): Duration =
+  def getConfDuration(confKey: String, defDur: => Duration) =
     runModeConfiguration.getString(s"$rootServices.$confKey")
       .orElse(runModeConfiguration.getString(s"$services.$confKey"))
       .orElse(runModeConfiguration.getString(s"$playServices.$confKey")) match {
@@ -75,13 +73,13 @@ trait ServicesConfig extends RunMode {
         case None => defDur
       }
 
-  def getInt(key: String): Int = runModeConfiguration.getInt(key).getOrElse(configNotFoundError(key))
+  def getInt(key: String) = runModeConfiguration.getInt(key).getOrElse(configNotFoundError(key))
 
-  def getString(key: String): String = runModeConfiguration.getString(key).getOrElse(configNotFoundError(key))
+  def getString(key: String) = runModeConfiguration.getString(key).getOrElse(configNotFoundError(key))
 
-  def getBoolean(key: String): Boolean = runModeConfiguration.getBoolean(key).getOrElse(configNotFoundError(key))
+  def getBoolean(key: String) = runModeConfiguration.getBoolean(key).getOrElse(configNotFoundError(key))
 
-  def getDuration(key: String): Duration = runModeConfiguration.getString(key).map(Duration.create).getOrElse(configNotFoundError(key))
+  def getDuration(key: String) = runModeConfiguration.getString(key).map(Duration.create).getOrElse(configNotFoundError(key))
 
   private def configNotFoundError(key: String) = throw new RuntimeException(s"Could not find config key '$key'")
 

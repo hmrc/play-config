@@ -17,7 +17,6 @@
 package uk.gov.hmrc.play.config.inject
 
 import com.google.inject.Inject
-import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
 
 
@@ -25,7 +24,7 @@ trait ServicesConfig extends uk.gov.hmrc.play.config.ServicesConfig {
 
   protected def environment: Environment
 
-  override def mode: Mode = environment.mode
+  override def mode = environment.mode
 
 }
 

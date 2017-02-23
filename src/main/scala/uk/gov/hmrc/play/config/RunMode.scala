@@ -22,8 +22,8 @@ import scala.annotation.tailrec
 
 trait RunMode {
 
-  protected def mode: Mode.Mode = Play.current.mode
-  protected def runModeConfiguration: Configuration = Play.current.configuration
+  protected def mode = Play.current.mode
+  protected def runModeConfiguration = Play.current.configuration
 
   lazy val env = if (mode.equals(Mode.Test)) "Test" else runModeConfiguration.getString("run.mode").getOrElse("Dev")
 

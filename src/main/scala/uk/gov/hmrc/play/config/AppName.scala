@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.play.config
 
-import play.api.{Configuration, Play}
+import play.api.Play
 
 trait AppName {
-  protected def appNameConfiguration: Configuration = Play.current.configuration
+  protected def appNameConfiguration = Play.current.configuration
   def appName = appNameConfiguration.getString("appName").getOrElse("APP NAME NOT SET")
 }
 
