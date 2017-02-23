@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.play.config
+package uk.gov.hmrc.play.config.inject
 
-import play.api.Play
+import com.google.inject.Inject
+import play.api.{Application, Configuration, Environment, Mode}
 
-trait AppName {
-  protected def appNameConfiguration = Play.current.configuration
-  def appName = appNameConfiguration.getString("appName").getOrElse("APP NAME NOT SET")
+import scala.annotation.tailrec
+
+trait RunMode extends uk.gov.hmrc.play.config.RunMode {
+
+  protected def environment: Environment
+
+  protected override def mode = environment.mode
+
 }
 
-
-object AppName extends AppName
+class DefaultRunMode @Inject()(
+  override val runModeConfiguration: Configuration,
+  val environment: Environment
+) extends RunMode
