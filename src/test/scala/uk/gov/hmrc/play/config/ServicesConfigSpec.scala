@@ -44,7 +44,7 @@ class ServicesConfigSpec extends WordSpecLike with Matchers with BeforeAndAfterA
 
   lazy val fakeApplication = FakeApplication(additionalConfiguration = config)
 
-  override def beforeAll(): Unit = {
+  override def beforeAll() {
     Play.start(fakeApplication)
   }
 
