@@ -59,3 +59,5 @@ trait RunMode {
   }
 
 }
+
+object RunMode extends RunMode
