@@ -17,14 +17,27 @@
 package uk.gov.hmrc.play.config
 
 import play.api.Configuration
+import play.api.Mode.Mode
 
-trait AppName {
-  protected def configuration: Configuration
-  def appName: String = configuration.getString("appName").getOrElse("APP NAME NOT SET")
-}
+object ModeAwareConfiguration {
 
-object AppName {
-  def apply(appConfig: Configuration) : AppName = new AppName {
-    override protected def configuration: Configuration = appConfig
+  protected def paths(mode: Mode) = Seq(
+    s"govuk-tax.$mode",
+    s"$mode"
+  )
+
+  def apply(configuration: Configuration, mode: Mode) : Configuration = {
+
+    val currentRunModePaths: Seq[String] =
+      paths(mode)
+
+    val runModeConfigs: Seq[Configuration] = currentRunModePaths.flatMap(configuration.getConfig)
+
+    val newConfigEntries: Map[String, Any] = runModeConfigs
+      .flatMap(_.entrySet.toSeq)
+      .foldLeft(Map.empty[String, Any])(_ + _)
+
+    configuration ++ Configuration(newConfigEntries.toSeq: _*)
   }
+
 }
