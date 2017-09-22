@@ -17,7 +17,8 @@
 package uk.gov.hmrc.play.config
 
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
-import play.api.Play
+import play.api.Mode.Mode
+import play.api.{Configuration, Mode, Play}
 import play.api.test.FakeApplication
 
 import scala.concurrent.duration._
@@ -27,7 +28,7 @@ import scala.concurrent.duration._
   */
 class ServicesConfigSpec extends WordSpecLike with Matchers with BeforeAndAfterAll {
 
-  val config = Map(
+  val configProperties : Map[String, Any] = Map(
     "microservice.services.testString" -> "hello world",
     "Test.microservice.services.devTestString" -> "hello test",
     "microservice.services.testInt" -> "1",
@@ -42,17 +43,11 @@ class ServicesConfigSpec extends WordSpecLike with Matchers with BeforeAndAfterA
     "anotherDur" -> "60seconds"
   )
 
-  lazy val fakeApplication = FakeApplication(additionalConfiguration = config)
+  trait Setup extends ServicesConfig {
+    override protected def mode: Mode = Mode.Test
 
-  override def beforeAll() {
-    Play.start(fakeApplication)
+    override protected def runModeConfiguration: Configuration = Configuration.from(configProperties)
   }
-
-  override def afterAll() {
-    Play.stop(fakeApplication)
-  }
-
-  trait Setup extends ServicesConfig
 
   "getConfString" should {
     "return a string from config under rootServices" in new Setup {
