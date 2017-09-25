@@ -16,14 +16,15 @@
 
 package uk.gov.hmrc.play.config
 
+import play.api.Mode.Mode
 import play.api._
 
 import scala.annotation.tailrec
 
 trait RunMode {
 
-  protected def mode = Play.current.mode
-  protected def runModeConfiguration = Play.current.configuration
+  protected def mode : Mode
+  protected def runModeConfiguration: Configuration
 
   lazy val env = if (mode.equals(Mode.Test)) "Test" else runModeConfiguration.getString("run.mode").getOrElse("Dev")
 
@@ -60,4 +61,11 @@ trait RunMode {
 
 }
 
-object RunMode extends RunMode
+object RunMode {
+  def apply(runMode : Mode, configuration: Configuration): RunMode =
+    new RunMode {
+      override protected def mode: Mode = runMode
+
+      override protected def runModeConfiguration: Configuration = configuration
+    }
+}

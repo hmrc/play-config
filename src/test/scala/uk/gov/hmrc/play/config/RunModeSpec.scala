@@ -16,28 +16,48 @@
 
 package uk.gov.hmrc.play.config
 
-import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
-import play.api.Play
-import play.api.test.FakeApplication
+import org.scalatest.{Matchers, WordSpecLike}
+import play.api.Mode.Mode
+import play.api.{Configuration, Mode}
 
-class RunModeSpec extends WordSpecLike with Matchers with BeforeAndAfterAll {
-
-  lazy val fakeApplication = FakeApplication()
-
-  override def beforeAll() {
-    Play.start(fakeApplication)
-  }
-
-  override def afterAll() {
-    Play.stop(fakeApplication)
-  }
+class RunModeSpec extends WordSpecLike with Matchers {
 
   trait Setup extends RunMode
 
+  "env" should {
+    "return 'Test' if Play mode is set to Test" in new Setup {
+      override protected def mode: Mode = Mode.Test
+
+      override protected def runModeConfiguration: Configuration = Configuration()
+
+      env shouldBe "Test"
+    }
+
+    "return value from 'run.mode' property if Play mode is not Test" in new Setup {
+      override protected def mode: Mode = Mode.Prod
+
+      override protected def runModeConfiguration: Configuration = Configuration(
+        "run.mode" -> "Something"
+      )
+
+      env shouldBe "Something"
+    }
+
+    "return Dev as a default if Play mode is not Test" in new Setup {
+      override protected def mode = Mode.Prod
+
+      override protected def runModeConfiguration = Configuration()
+
+      env shouldBe "Dev"
+    }
+
+  }
   "envPath" should {
 
     "return the `other` env path" in new Setup {
-      override lazy val env = "Dev"
+      override protected def mode = Mode.Dev
+
+      override protected def runModeConfiguration = Configuration()
 
       envPath("/somePath")(other = "http://localhost") shouldBe "http://localhost/somePath"
       envPath("/somePath")(other = "http://localhost/") shouldBe "http://localhost/somePath"
@@ -46,10 +66,14 @@ class RunModeSpec extends WordSpecLike with Matchers with BeforeAndAfterAll {
       envPath("somePath")(other = "http://localhost/") shouldBe "http://localhost/somePath"
       envPath("somePath/")(other = "http://localhost/") shouldBe "http://localhost/somePath"
       envPath()(other = "http://localhost") shouldBe "http://localhost"
+
     }
 
     "return the `prod` env path" in new Setup {
-      override lazy val env = "Prod"
+
+      override protected def mode = Mode.Prod
+
+      override protected def runModeConfiguration = Configuration("run.mode" -> "Prod")
 
       envPath("/somePath")(prod = "prod") shouldBe "/prod/somePath"
       envPath("/somePath")(prod = "/prod") shouldBe "/prod/somePath"
@@ -62,5 +86,11 @@ class RunModeSpec extends WordSpecLike with Matchers with BeforeAndAfterAll {
       envPath()(prod = "prod") shouldBe "/prod"
     }
 
+  }
+
+  "RunMode object should instantiate valid trait instance" in {
+    RunMode(Mode.Prod, Configuration(
+      "run.mode" -> "Something"
+    )).env shouldBe "Something"
   }
 }
