@@ -66,6 +66,6 @@ object RunMode {
     new RunMode {
       override protected def mode: Mode = runMode
 
-      override protected def runModeConfiguration: Configuration = runModeConfiguration
+      override protected def runModeConfiguration: Configuration = configuration
     }
 }

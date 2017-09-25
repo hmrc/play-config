@@ -87,4 +87,10 @@ class RunModeSpec extends WordSpecLike with Matchers {
     }
 
   }
+
+  "RunMode object should instantiate valid trait instance" in {
+    RunMode(Mode.Prod, Configuration(
+      "run.mode" -> "Something"
+    )).env shouldBe "Something"
+  }
 }
