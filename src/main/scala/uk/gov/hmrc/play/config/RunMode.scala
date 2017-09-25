@@ -60,3 +60,12 @@ trait RunMode {
   }
 
 }
+
+object RunMode {
+  def apply(runMode : Mode, configuration: Configuration): RunMode =
+    new RunMode {
+      override protected def mode: Mode = runMode
+
+      override protected def runModeConfiguration: Configuration = runModeConfiguration
+    }
+}
