@@ -23,13 +23,13 @@ class AppNameSpec extends WordSpecLike with ShouldMatchers {
 
   "AppName trait" should {
     "return app name if defined" in new AppName {
-      override protected def configuration: Configuration = Configuration("appName" -> "foo")
+      override protected def appNameConfiguration: Configuration = Configuration("appName" -> "foo")
 
       appName shouldBe "foo"
     }
 
     "return default name if not defined" in new AppName {
-      override protected def configuration: Configuration = Configuration()
+      override protected def appNameConfiguration: Configuration = Configuration()
 
       appName shouldBe "APP NAME NOT SET"
     }

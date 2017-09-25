@@ -19,12 +19,12 @@ package uk.gov.hmrc.play.config
 import play.api.Configuration
 
 trait AppName {
-  protected def configuration: Configuration
-  def appName: String = configuration.getString("appName").getOrElse("APP NAME NOT SET")
+  protected def appNameConfiguration: Configuration
+  def appName: String = appNameConfiguration.getString("appName").getOrElse("APP NAME NOT SET")
 }
 
 object AppName {
   def apply(appConfig: Configuration) : AppName = new AppName {
-    override protected def configuration: Configuration = appConfig
+    override protected def appNameConfiguration: Configuration = appConfig
   }
 }
