@@ -29,7 +29,7 @@ trait ServicesConfig extends RunMode {
   protected lazy val defaultProtocol: String =
     runModeConfiguration.getString(s"$rootServices.protocol")
     .getOrElse(runModeConfiguration.getString(s"$services.protocol")
-      .getOrElse("http"))
+      .getOrElse("https"))
 
   protected def config(serviceName: String) =
     runModeConfiguration.getConfig(s"$rootServices.$serviceName")
@@ -38,8 +38,8 @@ trait ServicesConfig extends RunMode {
       .getOrElse(throw new IllegalArgumentException(s"Configuration for service $serviceName not found"))))
 
   def baseUrl(serviceName: String) = {
-    val protocol = getConfString(s"$serviceName.protocol",defaultProtocol)
     val host = getConfString(s"$serviceName.host", throw new RuntimeException(s"Could not find config $serviceName.host"))
+    val protocol = getConfString(s"$serviceName.protocol", if (host == "localhost") "http" else defaultProtocol)
     val port = getConfInt(s"$serviceName.port", throw new RuntimeException(s"Could not find config $serviceName.port"))
     s"$protocol://$host:$port"
   }

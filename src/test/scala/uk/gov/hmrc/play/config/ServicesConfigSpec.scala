@@ -18,8 +18,7 @@ package uk.gov.hmrc.play.config
 
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import play.api.Mode.Mode
-import play.api.{Configuration, Mode, Play}
-import play.api.test.FakeApplication
+import play.api.{Configuration, Mode}
 
 import scala.concurrent.duration._
 
@@ -148,5 +147,32 @@ class ServicesConfigSpec extends WordSpecLike with Matchers with BeforeAndAfterA
         .getMessage shouldBe "Could not find config key 'notInConf'"
     }
   }
+
+  "baseUrl" should {
+    "use 'https' protocol when not provided explicitly and host != localhost" in new Setup {
+      override val runModeConfiguration: Configuration = Configuration.from(
+        Map(
+          "microservice.services.auth.host" -> "some-host",
+          "microservice.services.auth.port" -> "1234"
+        )
+      )
+
+      baseUrl("auth") shouldBe "https://some-host:1234"
+    }
+
+    "use 'http' protocol when not provided explicitly and host == localhost" in new Setup {
+      override val runModeConfiguration: Configuration = Configuration.from(
+        Map(
+          "microservice.services.auth.host" -> "localhost",
+          "microservice.services.auth.port" -> "1234"
+        )
+      )
+
+      baseUrl("auth") shouldBe "http://localhost:1234"
+    }
+  }
+
+
+
 
 }
