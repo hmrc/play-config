@@ -170,9 +170,39 @@ class ServicesConfigSpec extends WordSpecLike with Matchers with BeforeAndAfterA
 
       baseUrl("auth") shouldBe "http://localhost:1234"
     }
+
+    "use port 443 if protocol is https and no explicit port configured" in new Setup {
+      override val runModeConfiguration: Configuration = Configuration.from(
+        Map(
+          "microservice.services.auth.host" -> "some-host"
+        )
+      )
+
+      baseUrl("auth") shouldBe "https://some-host:443"
+    }
+
+    "use port 80 if protocol is http and no explicit port configured" in new Setup {
+      override val runModeConfiguration: Configuration = Configuration.from(
+        Map(
+          "microservice.services.auth.protocol" -> "http",
+          "microservice.services.auth.host"     -> "some-host"
+        )
+      )
+
+      baseUrl("auth") shouldBe "http://some-host:80"
+    }
+
+    "use explicitly configured port if provided" in new Setup {
+      override val runModeConfiguration: Configuration = Configuration.from(
+        Map(
+          "microservice.services.auth.host" -> "some-host",
+          "microservice.services.auth.port" -> 81
+        )
+      )
+
+      baseUrl("auth") shouldBe "https://some-host:81"
+    }
+
   }
-
-
-
 
 }
