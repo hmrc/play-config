@@ -40,7 +40,7 @@ trait ServicesConfig extends RunMode {
   def baseUrl(serviceName: String) = {
     val host = getConfString(s"$serviceName.host", throw new RuntimeException(s"Could not find config $serviceName.host"))
     val protocol = getConfString(s"$serviceName.protocol", if (host == "localhost") "http" else defaultProtocol)
-    val port = getConfInt(s"$serviceName.port", throw new RuntimeException(s"Could not find config $serviceName.port"))
+    val port = getConfInt(s"$serviceName.port", if (protocol == "https") 443 else 80)
     s"$protocol://$host:$port"
   }
 
