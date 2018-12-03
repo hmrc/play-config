@@ -59,13 +59,13 @@ class RunModeSpec extends WordSpecLike with Matchers {
 
       override protected def runModeConfiguration = Configuration()
 
-      envPath("/somePath")(other = "http://localhost") shouldBe "http://localhost/somePath"
-      envPath("/somePath")(other = "http://localhost/") shouldBe "http://localhost/somePath"
-      envPath("//somePath")(other = "http://localhost") shouldBe "http://localhost/somePath"
-      envPath("somePath")(other = "http://localhost") shouldBe "http://localhost/somePath"
-      envPath("somePath")(other = "http://localhost/") shouldBe "http://localhost/somePath"
-      envPath("somePath/")(other = "http://localhost/") shouldBe "http://localhost/somePath"
-      envPath()(other = "http://localhost") shouldBe "http://localhost"
+      envPath("/somePath")(other  = "http://localhost")  shouldBe "http://localhost/somePath"
+      envPath("/somePath")(other  = "http://localhost/") shouldBe "http://localhost/somePath"
+      envPath("//somePath")(other = "http://localhost")  shouldBe "http://localhost/somePath"
+      envPath("somePath")(other   = "http://localhost")  shouldBe "http://localhost/somePath"
+      envPath("somePath")(other   = "http://localhost/") shouldBe "http://localhost/somePath"
+      envPath("somePath/")(other  = "http://localhost/") shouldBe "http://localhost/somePath"
+      envPath()(other             = "http://localhost")  shouldBe "http://localhost"
 
     }
 
@@ -75,22 +75,24 @@ class RunModeSpec extends WordSpecLike with Matchers {
 
       override protected def runModeConfiguration = Configuration("run.mode" -> "Prod")
 
-      envPath("/somePath")(prod = "prod") shouldBe "/prod/somePath"
-      envPath("/somePath")(prod = "/prod") shouldBe "/prod/somePath"
-      envPath("/somePath")(prod = "//prod") shouldBe "/prod/somePath"
-      envPath("/somePath")(prod = "prod/") shouldBe "/prod/somePath"
-      envPath("/somePath")(prod = "/prod/") shouldBe "/prod/somePath"
-      envPath("/somePath")(prod = "//prod/") shouldBe "/prod/somePath"
-      envPath("//somePath")(prod = "/prod/") shouldBe "/prod/somePath"
-      envPath("somePath/")(prod = "prod") shouldBe "/prod/somePath"
-      envPath()(prod = "prod") shouldBe "/prod"
+      envPath("/somePath")(prod  = "prod")    shouldBe "/prod/somePath"
+      envPath("/somePath")(prod  = "/prod")   shouldBe "/prod/somePath"
+      envPath("/somePath")(prod  = "//prod")  shouldBe "/prod/somePath"
+      envPath("/somePath")(prod  = "prod/")   shouldBe "/prod/somePath"
+      envPath("/somePath")(prod  = "/prod/")  shouldBe "/prod/somePath"
+      envPath("/somePath")(prod  = "//prod/") shouldBe "/prod/somePath"
+      envPath("//somePath")(prod = "/prod/")  shouldBe "/prod/somePath"
+      envPath("somePath/")(prod  = "prod")    shouldBe "/prod/somePath"
+      envPath()(prod             = "prod")    shouldBe "/prod"
     }
 
   }
 
   "RunMode object should instantiate valid trait instance" in {
-    RunMode(Mode.Prod, Configuration(
-      "run.mode" -> "Something"
-    )).env shouldBe "Something"
+    RunMode(
+      Mode.Prod,
+      Configuration(
+        "run.mode" -> "Something"
+      )).env shouldBe "Something"
   }
 }

@@ -23,8 +23,7 @@ class ControllerConfigTest extends WordSpecLike with Matchers {
   import com.typesafe.config.{Config, ConfigFactory}
   import net.ceedubs.ficus.Ficus._
 
-  val config = ConfigFactory.parseString(
-    """
+  val config = ConfigFactory.parseString("""
       |controllers {
       |  uk.gov.hmrc.play.controllers.HealthCheck {
       |    needsAuditing = false

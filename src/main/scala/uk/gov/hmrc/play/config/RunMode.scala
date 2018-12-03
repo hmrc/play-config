@@ -23,11 +23,10 @@ import scala.annotation.tailrec
 
 trait RunMode {
 
-  protected def mode : Mode
+  protected def mode: Mode
   protected def runModeConfiguration: Configuration
 
   lazy val env = if (mode.equals(Mode.Test)) "Test" else runModeConfiguration.getString("run.mode").getOrElse("Dev")
-
 
   /**
     * Returns the appropriate `env` specific url given `prod` and other alternatives.
@@ -48,12 +47,11 @@ trait RunMode {
   def envPath(path: String = "")(other: => String = "", prod: => String = "") = {
 
     @tailrec
-    def sanitise(url: String, prefix: String = ""): String = {
-      if(url.startsWith("/")) sanitise(url.drop(1), prefix)
-      else if(url.endsWith("/")) sanitise(url.dropRight(1), prefix)
+    def sanitise(url: String, prefix: String = ""): String =
+      if (url.startsWith("/")) sanitise(url.drop(1), prefix)
+      else if (url.endsWith("/")) sanitise(url.dropRight(1), prefix)
       else if (url.isEmpty || prefix.isEmpty) url
       else prefix + url
-    }
 
     val url = if (env == "Prod") sanitise(prod, "/") else sanitise(other)
     url + sanitise(path, "/")
@@ -62,7 +60,7 @@ trait RunMode {
 }
 
 object RunMode {
-  def apply(runMode : Mode, configuration: Configuration): RunMode =
+  def apply(runMode: Mode, configuration: Configuration): RunMode =
     new RunMode {
       override protected def mode: Mode = runMode
 

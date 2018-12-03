@@ -20,7 +20,6 @@ import scala.util.matching.Regex
 
 case class ControllerParams(needsLogging: Boolean = true, needsAuditing: Boolean = true, needsAuth: Boolean = true)
 
-
 trait ControllerConfig {
 
   import com.typesafe.config.Config
@@ -34,13 +33,12 @@ trait ControllerConfig {
 
   private implicit val controllerParamsReader = ValueReader.relative[ControllerParams] { config =>
     ControllerParams(
-      needsLogging = config.getAs[Boolean]("needsLogging").getOrElse(true),
+      needsLogging  = config.getAs[Boolean]("needsLogging").getOrElse(true),
       needsAuditing = config.getAs[Boolean]("needsAuditing").getOrElse(true),
-      needsAuth = config.getAs[Boolean]("needsAuth").getOrElse(true)
+      needsAuth     = config.getAs[Boolean]("needsAuth").getOrElse(true)
     )
   }
 
-  def paramsForController(controllerName: String): ControllerParams = {
+  def paramsForController(controllerName: String): ControllerParams =
     controllerConfigs.as[Option[ControllerParams]](controllerName).getOrElse(ControllerParams())
-  }
 }

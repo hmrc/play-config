@@ -43,23 +43,24 @@ private object AppDependencies {
   import play.core.PlayVersion
 
   val compile = Seq(
-    "com.typesafe.play" %% "play" % PlayVersion.current % "provided",
-    "net.ceedubs" %% "ficus" % "1.1.1"
+    "com.typesafe.play" %% "play"  % PlayVersion.current % "provided",
+    "net.ceedubs"       %% "ficus" % "1.1.1"
   )
 
   trait TestDependencies {
-    lazy val scope: String = "test"
+    lazy val scope: String       = "test"
     lazy val test: Seq[ModuleID] = ???
   }
 
   object Test {
-    def apply() = new TestDependencies {
-      override lazy val test = Seq(
-        "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-        "org.scalatest" %% "scalatest" % "2.2.4" % scope,
-        "org.pegdown" % "pegdown" % "1.5.0" % scope
-      )
-    }.test
+    def apply() =
+      new TestDependencies {
+        override lazy val test = Seq(
+          "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
+          "org.scalatest"     %% "scalatest" % "2.2.4"             % scope,
+          "org.pegdown"       % "pegdown"    % "1.5.0"             % scope
+        )
+      }.test
   }
 
   def apply() = compile ++ Test()

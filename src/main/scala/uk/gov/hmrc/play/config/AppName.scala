@@ -24,7 +24,7 @@ trait AppName {
 }
 
 object AppName {
-  def apply(appConfig: Configuration) : AppName = new AppName {
+  def apply(appConfig: Configuration): AppName = new AppName {
     override protected def appNameConfiguration: Configuration = appConfig
   }
 }

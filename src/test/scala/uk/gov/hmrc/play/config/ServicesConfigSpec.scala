@@ -28,19 +28,19 @@ import scala.concurrent.duration._
   */
 class ServicesConfigSpec extends WordSpecLike with Matchers with BeforeAndAfterAll {
 
-  val configProperties : Map[String, Any] = Map(
-    "microservice.services.testString" -> "hello world",
+  val configProperties: Map[String, Any] = Map(
+    "microservice.services.testString"         -> "hello world",
     "Test.microservice.services.devTestString" -> "hello test",
-    "microservice.services.testInt" -> "1",
-    "Test.microservice.services.devTestInt" -> "1",
-    "microservice.services.testBool" -> "true",
-    "Test.microservice.services.devTestBool" -> "true",
-    "microservice.services.testDur" -> "60seconds",
-    "Test.microservice.services.devTestDur" -> "60seconds",
-    "anotherInt" -> "1",
-    "anotherString" -> "hello other test",
-    "anotherBool" -> "false",
-    "anotherDur" -> "60seconds"
+    "microservice.services.testInt"            -> "1",
+    "Test.microservice.services.devTestInt"    -> "1",
+    "microservice.services.testBool"           -> "true",
+    "Test.microservice.services.devTestBool"   -> "true",
+    "microservice.services.testDur"            -> "60seconds",
+    "Test.microservice.services.devTestDur"    -> "60seconds",
+    "anotherInt"                               -> "1",
+    "anotherString"                            -> "hello other test",
+    "anotherBool"                              -> "false",
+    "anotherDur"                               -> "60seconds"
   )
 
   trait Setup extends ServicesConfig {
@@ -111,8 +111,7 @@ class ServicesConfigSpec extends WordSpecLike with Matchers with BeforeAndAfterA
     }
 
     "throw an exception if the config can't be found" in new Setup {
-      intercept[RuntimeException](getInt("notInConf"))
-        .getMessage shouldBe "Could not find config key 'notInConf'"
+      intercept[RuntimeException](getInt("notInConf")).getMessage shouldBe "Could not find config key 'notInConf'"
     }
   }
 
@@ -122,8 +121,7 @@ class ServicesConfigSpec extends WordSpecLike with Matchers with BeforeAndAfterA
     }
 
     "throw an exception if the config can't be found" in new Setup {
-      intercept[RuntimeException](getString("notInConf"))
-        .getMessage shouldBe "Could not find config key 'notInConf'"
+      intercept[RuntimeException](getString("notInConf")).getMessage shouldBe "Could not find config key 'notInConf'"
     }
   }
 
@@ -133,8 +131,7 @@ class ServicesConfigSpec extends WordSpecLike with Matchers with BeforeAndAfterA
     }
 
     "throw an exception if the config can't be found" in new Setup {
-      intercept[RuntimeException](getBoolean("notInConf"))
-        .getMessage shouldBe "Could not find config key 'notInConf'"
+      intercept[RuntimeException](getBoolean("notInConf")).getMessage shouldBe "Could not find config key 'notInConf'"
     }
   }
 
@@ -144,8 +141,7 @@ class ServicesConfigSpec extends WordSpecLike with Matchers with BeforeAndAfterA
     }
 
     "throw an exception if the config can't be found" in new Setup {
-      intercept[RuntimeException](getDuration("notInConf"))
-        .getMessage shouldBe "Could not find config key 'notInConf'"
+      intercept[RuntimeException](getDuration("notInConf")).getMessage shouldBe "Could not find config key 'notInConf'"
     }
   }
 
