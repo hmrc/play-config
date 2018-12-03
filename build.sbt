@@ -1,6 +1,6 @@
 val appName = "play-config"
 
-lazy val library = (project in file("."))
+lazy val library = Project(appName, file("."))
   .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
   .settings(
     majorVersion := 7,
