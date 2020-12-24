@@ -1,7 +1,7 @@
 play-config
 ===========
 
-## This library is deprecated now. Please use [bootstrap-play](https://github.com/hmrc/bootstrap-play) to use features from the library
+## This library is deprecated now. Please use [bootstrap-play](https://github.com/hmrc/bootstrap-play) to use features from this library
 
 A micro-library containing Play configuration utility functions.
 
